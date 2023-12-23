@@ -1,7 +1,7 @@
 const express = require('express')
 const cors = require('cors')
 const port = process.env.PORT || 3001
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 
 const app = express();
@@ -36,7 +36,7 @@ async function run() {
     })
 
     app.post("/card", async(req, res) => {
-      const product = req.body;
+      const product = req.body;    
       const result = await cards.insertOne(product);
       res.send(result)
     })
@@ -54,7 +54,21 @@ async function run() {
       const email = req.params?.email;
       const filter = {email: email}
       const result = await cards.find(filter).toArray();
-        console.log(result);
+      res.send(result)
+    })
+
+    app.delete("/myCard/:id", async (req, res) => {
+      const id = req.params.id
+      const filter = {_id: id}
+      const result = await cards.deleteOne(filter)
+      res.send(result)
+    })
+
+
+    app.get("/product/:id", async(req, res) => {
+      const id = req.params.id;
+      const filter = {_id: new ObjectId(id)}
+      const result = await products.findOne(filter)
       res.send(result)
     })
 
