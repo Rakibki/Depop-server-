@@ -27,10 +27,35 @@ async function run() {
 
     const database = client.db("Depop");
     const products = database.collection("products");
+    const cards = database.collection("cards");
+
 
     app.get("/products", async(req, res) => {
       const result = await products.find().toArray();
       res?.send(result)
+    })
+
+    app.post("/card", async(req, res) => {
+      const product = req.body;
+      const result = await cards.insertOne(product);
+      res.send(result)
+    })
+
+
+    app.get("/cardLength/:email", async (req, res) => {
+      const email = req?.params?.email;
+      const filter = {email: email}
+      const count = await cards.countDocuments(filter)
+      res.send({count});
+    })
+
+
+    app.get("/myCard/:email", async (req, res) => {
+      const email = req.params?.email;
+      const filter = {email: email}
+      const result = await cards.find(filter).toArray();
+        console.log(result);
+      res.send(result)
     })
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
